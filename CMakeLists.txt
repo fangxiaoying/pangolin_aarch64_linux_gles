@@ -17,9 +17,11 @@ SET(CPACK_PACKAGE_VERSION_MINOR ${PANGOLIN_VERSION_MINOR})
 SET(CPACK_PACKAGE_VERSION_PATCH "0")
 include(CPack)
 
-option( BUILD_TESTS "Build Tests" ON )
-option( BUILD_TOOLS "Build Examples" ON )
-option( BUILD_EXAMPLES "Build Tools" ON )
+# just build example
+option( BUILD_TESTS "Build Tests" OFF )
+option( BUILD_EXAMPLES "Build Examples" ON )
+option( BUILD_TOOLS "Build Tools" OFF )
+
 
 set (CMAKE_CXX_STANDARD 14)
 
@@ -58,6 +60,14 @@ if(ANDROID)
     set(ANDROID_PACKAGE_NAME "com.github.stevenlovegrove.pangolin")
     include(AndroidUtils)
 endif()
+#  if platform is imx, build gles2  !!!
+if(_IMX_LINUX_)                                
+    set(HAVE_GLES 1)
+    option(BUILD_FOR_GLES_2 "Build for OpenGL ES 2 instead of ES 1" ON )
+    if(BUILD_FOR_GLES_2)
+        set(HAVE_GLES_2 1)
+    endif()
+endif()
 
 if(ANDROID OR IOS)
     set(HAVE_GLES 1)
@@ -70,6 +80,8 @@ endif()
 if(_OSX_)
     set(CMAKE_MACOSX_RPATH ON)
 endif()
+
+
 
 # Overide with cmake -DCMAKE_BUILD_TYPE=Debug {dir}
 if( NOT CMAKE_BUILD_TYPE AND NOT _WIN_ )
@@ -99,6 +111,7 @@ if(BUILD_TESTS)
 endif()
 
 if(BUILD_TOOLS)
+    message("-----------------------------build tools")
     set(Pangolin_DIR ${Pangolin_BINARY_DIR}/src)
     add_subdirectory(tools)
 endif()

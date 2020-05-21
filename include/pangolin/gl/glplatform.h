@@ -55,13 +55,19 @@
     #undef ERROR
 #endif
 
-#include <GL/glew.h>
+#ifndef _IMX_LINUX_
+    #include <GL/glew.h>
+#endif
+
+//#include <GL/glew.h>
 
 #ifdef HAVE_GLES
-    #if defined(_ANDROID_)
+    #if defined(_ANDROID_) ||  defined(_IMX_LINUX_)
         #include <EGL/egl.h>
         #ifdef HAVE_GLES_2
+            #define GLFW_INCLUDE_ES2
             #include <GLES2/gl2.h>
+            #define GL_GLEXT_PROTOTYPES
             #include <GLES2/gl2ext.h>
         #else
             #include <GLES/gl.h>
@@ -74,9 +80,9 @@
     #endif
 #else
     #ifdef _OSX_
-        #include <OpenGL/gl.h>
+        #include <OpenGL/xxgl.h>
     #else
-        #include <GL/gl.h>
+        #include <GL/xxgl.h>
     #endif
 #endif // HAVE_GLES
 

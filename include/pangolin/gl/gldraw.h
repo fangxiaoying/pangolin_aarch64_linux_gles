@@ -141,9 +141,9 @@ inline void glDrawCross( GLfloat x, GLfloat y, GLfloat z, GLfloat rad )
 
 inline void glDrawAxis(float s)
 {
-    const GLfloat cols[]  = { 1,0,0, 1,0,0, 0,1,0, 0,1,0, 0,0,1, 0,0,1 };
-    const GLfloat verts[] = { 0,0,0, s,0,0, 0,0,0, 0,s,0, 0,0,0, 0,0,s };
-    glDrawColoredVertices<float,float>(6, verts, cols, GL_LINES, 3, 3);
+    // const GLfloat cols[]  = { 1,0,0, 1,0,0, 0,1,0, 0,1,0, 0,0,1, 0,0,1 };
+    // const GLfloat verts[] = { 0,0,0, s,0,0, 0,0,0, 0,s,0, 0,0,0, 0,0,s };
+    // glDrawColoredVertices<float,float>(6, verts, cols, GL_LINES, 3, 3);
 }
 
 inline void glDrawRect( GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2, GLenum mode = GL_TRIANGLE_FAN )
@@ -189,6 +189,24 @@ inline void glDrawCircle( GLfloat x, GLfloat y, GLfloat rad )
     glDrawArrays(GL_TRIANGLE_FAN, 0, N);
     glDrawArrays(GL_LINE_STRIP, 0, N);
     glDisableClientState(GL_VERTEX_ARRAY);
+}
+
+inline void glDrawTriangle(GLfloat axis_min=-0.5f, GLfloat axis_max = +0.5f){
+
+    const GLfloat l = axis_min;
+    const GLfloat h = axis_max;
+
+    GLfloat verts[] ={
+        0,h,0,
+        l,l,0,
+        h,l,0
+    };
+
+    glVertexAttribPointer ( 0, 3, GL_FLOAT, GL_FALSE, 0, verts );
+    glEnableVertexAttribArray ( 0 );
+    glDrawArrays ( GL_TRIANGLES, 0, 3 );
+
+
 }
 
 inline void glDrawColouredCube(GLfloat axis_min=-0.5f, GLfloat axis_max = +0.5f)

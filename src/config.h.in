@@ -59,6 +59,7 @@
 #cmakedefine _LINUX_
 #cmakedefine _ANDROID_
 #cmakedefine _IOS_
+#cmakedefine _IMX_LINUX_
 
 /// Compiler
 #cmakedefine _GCC_

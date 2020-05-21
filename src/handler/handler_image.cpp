@@ -3,6 +3,15 @@
 
 namespace pangolin
 {
+inline void glOrtho(
+    GLdouble l, GLdouble r,
+    GLdouble b, GLdouble t,
+    GLdouble n, GLdouble f)
+{
+    pangolin::GlEngine& gl = pangolin::glEngine();
+    gl.currentmatrix->top() = pangolin::ProjectionMatrixOrthographic(l,r,b,t,n,f);
+    gl.UpdateMatrices();
+}
 
 ImageViewHandler::ImageViewHandler()
     : linked_view_handler(0),

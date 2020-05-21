@@ -29,14 +29,14 @@
 
 #include <stack>
 
-#include <pangolin/opengl_render_state.h>
-#include <pangolin/glsl.h>
-
+#include <pangolin/display/opengl_render_state.h>
+#include <pangolin/gl/glsl.h>
 namespace pangolin {
 
 class GlEngine
 {
 public:
+
     const char* vert =
             "attribute vec4 a_position;\n"
             "attribute vec4 a_color;\n"
@@ -108,7 +108,7 @@ public:
     {
         prog_fixed.SaveBind();
         glUniform4f( u_color, r, g, b, a);
-        prog_fixed.Unbind();
+        //prog_fixed.Unbind();    not sure this can cause bug !!!
     }
 
     void EnableTexturing(GLboolean v)
@@ -116,6 +116,12 @@ public:
         prog_fixed.SaveBind();
         glUniform1i( u_textureEnable, v);
         prog_fixed.Unbind();
+    }
+
+    GLenum getglprogram()
+    {
+        GLenum programid = prog_fixed.ProgramId();
+        return programid;
     }
 
 //protected:
@@ -318,3 +324,5 @@ inline void glTexEnvf(	GLenum target,
 {
     pango_print_error("Not Implemented: %s, %s, %d", __FUNCTION__, __FILE__, __LINE__);
 }
+
+

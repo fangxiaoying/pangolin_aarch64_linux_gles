@@ -2,6 +2,7 @@
 
 #include <pangolin/platform.h>
 
+
 #define GLdouble     GLfloat
 #define glClearDepth glClearDepthf
 #define glFrustum    glFrustumf
@@ -22,6 +23,24 @@
     #define GL_DEPTH_COMPONENT24        GL_DEPTH_COMPONENT16 // <----
     #define GL_COLOR_ATTACHMENT0_EXT    GL_COLOR_ATTACHMENT0
     #define GL_DEPTH_ATTACHMENT_EXT     GL_DEPTH_ATTACHMENT
+    // IMX8  GLES2         
+    #define GL_LUMINANCE8               GL_LUMINANCE8_EXT
+    #define GL_RGBA8                    GL_RGBA8_OES
+    #define GL_LUMINANCE16              GL_LUMINANCE16F_EXT
+    #define GL_LUMINANCE32I_EXT         GL_LUMINANCE32F_EXT     // error , gles is not support 32I
+    #define GL_LUMINANCE32F_ARB         GL_LUMINANCE32F_EXT
+    #define GL_DOUBLE                   GL_FLOAT                //GLES not support double
+    #define GL_BGR                      GL_RGB                  // error  GLES not support BGR
+    #define GL_BGRA                     GL_BGRA_EXT
+    #define GL_RGBA16                   GL_RGBA16_EXT
+    #define GL_RGBA32F                  GL_RGBA32F_EXT
+    #define GL_RED                      GL_RED_EXT
+    #define GL_UNPACK_ROW_LENGTH        GL_UNPACK_ROW_LENGTH_EXT
+    // gles2.h
+    #define glGetBufferSubData          glBufferSubData
+    // IMX8 gl2ext.h
+    //#define glCopyImageSubData          glCopyImageSubDataOES
+    
 #else
     #define glOrtho                     glOrthof
     #define glGenFramebuffersEXT        glGenFramebuffersOES
@@ -37,7 +56,7 @@
 #define glGetDoublev                glGetFloatv
 
 #ifdef HAVE_GLES_2
-#include <pangolin/gl2engine.h>
+#include <pangolin/gl/compat/gl2engine.h>
 #endif
 
 inline void glRectf(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)

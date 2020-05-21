@@ -26,7 +26,12 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 ENDIF()
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    SET(_LINUX_ 1)
+# set embedded linux Flag                             !!!
+    IF(${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
+        SET(_IMX_LINUX_ 1)                      #aarch64 linux
+    ELSE()
+        SET(_LINUX_ 1)                          #x86 linux
+    ENDIF()
 ENDIF()
 
 IF(ANDROID)

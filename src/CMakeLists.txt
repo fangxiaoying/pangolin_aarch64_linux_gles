@@ -48,7 +48,7 @@ if(BUILD_PANGOLIN_GUI)
 
 endif()
 
-option(BUILD_PANGOLIN_VARS "Build support for Pangolin Vars" ON)
+option(BUILD_PANGOLIN_VARS "Build support for Pangolin Vars" OFF)
 if(BUILD_PANGOLIN_VARS)
   append_glob(HEADERS ${INCDIR}/var/*.h*)
   append_glob(SOURCES var/*.cpp)
@@ -59,7 +59,7 @@ if(BUILD_PANGOLIN_VARS)
   endif()
 endif()
 
-option(BUILD_PANGOLIN_VIDEO "Build support for Pangolin Video Utilities" ON)
+option(BUILD_PANGOLIN_VIDEO "Build support for Pangolin Video Utilities" OFF)
 if(BUILD_PANGOLIN_VIDEO)
   # Generic video includes
   append_glob(HEADERS ${INCDIR}/video/*.h*)
@@ -124,7 +124,7 @@ if(BUILD_PANGOLIN_VIDEO)
     RegisterThreadVideoFactory
   )
 
-  if(LINUX)
+  if(LINUX OR _IMX_LINUX_)
     list(APPEND HEADERS ${INCDIR}/video/drivers/shared_memory.h)
     list(APPEND SOURCES video/drivers/shared_memory.cpp)
     # Required for shared memory API using some versions of glibc
@@ -143,9 +143,9 @@ if(LINUX)
 endif()
 
 #######################################################
-## Setup required includes / link info
+## Setup required includes / link info                                                  选择   X11 or  wayland
 
-option(DISPLAY_X11 "X11 Window Interface" ON)
+option(DISPLAY_X11 "X11 Window Interface" OFF)
 option(DISPLAY_WAYLAND "Wayland Window Interface" OFF)
 
 if(BUILD_PANGOLIN_GUI)
@@ -165,31 +165,62 @@ if(BUILD_PANGOLIN_GUI)
         list(APPEND HEADERS "${INCDIR}/ios/PangolinAppDelegate.h" "${INCDIR}/ios/PangolinViewController.h" )
         list(APPEND SOURCES "ios/PangolinAppDelegate.mm" "ios/PangolinViewController.mm" )
         list(APPEND WINDOW_FACTORY_REG RegisterIosWindowFactory)
-    else()
+    elseif(_IMX_LINUX_)
+        message("++++  For imx yocto platform, should use specific code for GLFW !                     gpu is support glesv2!")
+        ##  create  GLFW_wayland display!!!
+        ##  choose inherit display.cpp  
+        list(APPEND SOURCES display/device/display_glfw_wayland.cpp )
+        list(APPEND WINDOW_FACTORY_REG RegisterGLFWWindowFactory)
+
+
+        find_package(PkgConfig)
+        pkg_search_module(GLFW REQUIRED glfw3)
+
+        if(HAVE_GLES_2)
+            list(APPEND LINK_LIBS "-lEGL;-lGLESv2" )
+        else()
+            list(APPEND LINK_LIBS "-lEGL;-lGLESv1_CM" )
+        endif()
+
+        list(APPEND LINK_LIBS
+            ${GLFW_STATIC_LIBRARIES}
+        )
+        list(APPEND INTERNAL_INC
+            ${GLFW_INCLUDE_DIR}
+        )
+
+
+    else() 
         find_package(OpenGL REQUIRED)
         list(APPEND USER_INC  ${OPENGL_INCLUDE_DIR})
         list(APPEND LINK_LIBS ${OPENGL_LIBRARIES})
-
+        message("+++++  It is debug message  find  the  OpenGL  !!!   error" )
+  
+        
         if(NOT BUILD_EXTERN_GLEW)
+            message("+++++  It is debug message  find  the  glew  !!!   error" )
             find_package(GLEW REQUIRED)
         endif()
         list(APPEND USER_INC  ${GLEW_INCLUDE_DIR})
         list(APPEND LINK_LIBS ${GLEW_LIBRARY})
+        
     endif()
 
     if( HAVE_GLES_2 )
+        message("+++++   It is debug message  that i.MX is support gles2")
         # Add Pangolins backwards compat layer.
-        list(APPEND HEADERS ${INCDIR}/gl2engine.h )
-        list(APPEND SOURCES gl2engine.cpp)
+        list(APPEND HEADERS ${INCDIR}/gl/compat/gl2engine.h )
+        list(APPEND SOURCES gl/compat/gl2engine.cpp)
     endif()
 
-    # headless offscreen rendering via EGL
-    find_package(OpenGL QUIET COMPONENTS EGL)
-    if(OpenGL_EGL_FOUND)
-        list(APPEND WINDOW_FACTORY_REG RegisterNoneWindowFactory)
-        list(APPEND SOURCES display/device/display_headless.cpp)
-        list(APPEND LINK_LIBS ${OPENGL_egl_LIBRARY} )
-    endif()
+    # # headless offscreen rendering via EGL
+    # find_package(OpenGL QUIET COMPONENTS EGL)
+    # if(OpenGL_EGL_FOUND)
+    #     message("+++++   found OpenGL EGL      这里可能存在问题，不需要使用display_headless.cpp")
+    #     list(APPEND WINDOW_FACTORY_REG Register)
+    #     list(APPEND SOURCES display/device/display_headless.cpp)
+    #     list(APPEND LINK_LIBS ${OPENGL_egl_LIBRARY} )
+    # endif()
 endif()
 
 #######################################################
@@ -200,6 +231,8 @@ if(ANDROID)
     add_definitions(-fno-data-sections)
     list(APPEND LINK_LIBS android log)
 elseif(IOS)
+    # Nothing specific in here yet.
+elseif(_IMX_LINUX_)
     # Nothing specific in here yet.
 else()
     if(BUILD_PANGOLIN_GUI)
@@ -629,11 +662,13 @@ endif()
 set(INSTALL_INCLUDE_DIR "include")
 
 add_library(${LIBRARY_NAME} ${SOURCES} ${HEADERS})
-# 'System' includes shield us from warnings in those includes.
-target_include_directories(${LIBRARY_NAME} SYSTEM PUBLIC ${USER_INC} PRIVATE ${INTERNAL_INC})
+## 'System' includes shield us from warnings in those includes.
+#target_include_directories(${LIBRARY_NAME} SYSTEM PUBLIC ${USER_INC} PRIVATE ${INTERNAL_INC})
 target_include_directories(${LIBRARY_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                                                   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-                                                  $<INSTALL_INTERFACE:${INSTALL_INCLUDE_DIR}>)
+                                                  $<INSTALL_INTERFACE:${INSTALL_INCLUDE_DIR}>
+                                                  PUBLIC ${USER_INC}
+                                                  PRIVATE ${INTERNAL_INC})
 target_link_libraries(${LIBRARY_NAME} PUBLIC ${LINK_LIBS})
 
 ## Generate symbol export helper header on MSVC

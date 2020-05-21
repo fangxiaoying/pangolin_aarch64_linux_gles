@@ -28,6 +28,7 @@
 #pragma once
 
 #include <pangolin/gl/glplatform.h>
+#include <pangolin/gl/glinclude.h>
 #include <map>
 
 namespace pangolin {

@@ -3,6 +3,7 @@ include(ExternalProject)
 set(ExternConfig "")
 
 if( BUILD_EXTERN_GLEW )
+message("+++++ it is debug message   external/CMakeLists.txt    BUILD_EXTERN_GLEW  ")
 
 #########################################################
 # GLEW

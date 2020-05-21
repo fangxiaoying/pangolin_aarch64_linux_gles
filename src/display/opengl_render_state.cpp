@@ -161,6 +161,10 @@ void OpenGlRenderState::Apply() const
     if(follow) {
         T_cw.Multiply();
     }
+
+    // use gl program
+    //pangolin::glEngine().prog_fixed.Bind();
+
 }
 
 OpenGlMatrix& OpenGlRenderState::GetProjectionMatrix(unsigned int view)

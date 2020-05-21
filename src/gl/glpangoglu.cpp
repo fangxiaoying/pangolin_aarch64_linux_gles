@@ -39,8 +39,13 @@ static const std::unordered_map<GLenum, std::string> gl_error_string = {
     {GL_INVALID_OPERATION, "GL_INVALID_OPERATION: The specified operation is not allowed in the current state."},
     {GL_INVALID_FRAMEBUFFER_OPERATION, "GL_INVALID_FRAMEBUFFER_OPERATION: The framebuffer object is not complete."},
     {GL_OUT_OF_MEMORY, "GL_OUT_OF_MEMORY: There is not enough memory left to execute the command."},
+#ifdef HAVE_GLES_2
+    {GL_STACK_UNDERFLOW_KHR, "GL_STACK_UNDERFLOW: An attempt has been made to perform an operation that would cause an internal stack to underflow."},
+    {GL_STACK_OVERFLOW_KHR, "GL_STACK_OVERFLOW: An attempt has been made to perform an operation that would cause an internal stack to overflow."},
+#else
     {GL_STACK_UNDERFLOW, "GL_STACK_UNDERFLOW: An attempt has been made to perform an operation that would cause an internal stack to underflow."},
     {GL_STACK_OVERFLOW, "GL_STACK_OVERFLOW: An attempt has been made to perform an operation that would cause an internal stack to overflow."},
+#endif
 };
 
 const char* glErrorString(GLenum error)

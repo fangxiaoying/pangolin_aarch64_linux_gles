@@ -2,6 +2,8 @@
 #include <pangolin/image/image_utils.h>
 #include <pangolin/image/image_convert.h>
 
+
+
 namespace pangolin
 {
 
@@ -18,8 +20,9 @@ ImageView::~ImageView()
 void ImageView::Render()
 {
     LoadPending();
-
+#ifndef HAVE_GLES
     glPushAttrib(GL_DEPTH_BITS);
+#endif
     glDisable(GL_DEPTH_TEST);
 
     Activate();
@@ -50,8 +53,9 @@ void ImageView::Render()
     {
         extern_draw_function(*this);
     }
-
+#ifndef HAVE_GLES
     glPopAttrib();
+#endif
 }
 
 void ImageView::Mouse(View& view, pangolin::MouseButton button, int x, int y, bool pressed, int button_state)
@@ -65,46 +69,46 @@ void ImageView::Mouse(View& view, pangolin::MouseButton button, int x, int y, bo
 
 void ImageView::Keyboard(View& view, unsigned char key, int x, int y, bool pressed)
 {
-    if(key == 'a')
-    {
-        if(!tex.IsValid())
-        {
-            std::cerr << "ImageViewHandler does not contain valid texture." << std::endl;
-            return;
-        }
+    // if(key == 'a')
+    // {
+    //     if(!tex.IsValid())
+    //     {
+    //         std::cerr << "ImageViewHandler does not contain valid texture." << std::endl;
+    //         return;
+    //     }
 
-        // compute scale
-        const bool have_selection = std::isfinite(GetSelection().Area()) && std::abs(GetSelection().Area()) >= 4;
-        const pangolin::XYRangef froi = have_selection ? GetSelection() : GetViewToRender();
+    //     // compute scale
+    //     const bool have_selection = std::isfinite(GetSelection().Area()) && std::abs(GetSelection().Area()) >= 4;
+    //     const pangolin::XYRangef froi = have_selection ? GetSelection() : GetViewToRender();
 
-        // Download texture so that we can take min / max
-        pangolin::TypedImage img;
-        tex.Download(img);
-        offset_scale = pangolin::GetOffsetScale(img, pangolin::Round(froi), img.fmt);
-    }
-    else if(key == 'b')
-    {
-        if(!tex.IsValid())
-        {
-            std::cerr << "ImageViewHandler does not contain valid texture." << std::endl;
-            return;
-        }
+    //     // Download texture so that we can take min / max
+    //     pangolin::TypedImage img;
+    //     tex.Download(img);
+    //     offset_scale = pangolin::GetOffsetScale(img, pangolin::Round(froi), img.fmt);
+    // }
+    // else if(key == 'b')
+    // {
+    //     if(!tex.IsValid())
+    //     {
+    //         std::cerr << "ImageViewHandler does not contain valid texture." << std::endl;
+    //         return;
+    //     }
 
-        // compute scale
-        const bool have_selection = std::isfinite(GetSelection().Area()) && std::abs(GetSelection().Area()) >= 4;
-        const pangolin::XYRangef froi = have_selection ? GetSelection() : GetViewToRender();
+    //     // compute scale
+    //     const bool have_selection = std::isfinite(GetSelection().Area()) && std::abs(GetSelection().Area()) >= 4;
+    //     const pangolin::XYRangef froi = have_selection ? GetSelection() : GetViewToRender();
 
-        // Download texture so that we can take min / max
-        pangolin::TypedImage img;
-        tex.Download(img);
-        std::pair<float, float> mm = pangolin::GetMinMax(img, pangolin::Round(froi), img.fmt);
+    //     // Download texture so that we can take min / max
+    //     pangolin::TypedImage img;
+    //     tex.Download(img);
+    //     std::pair<float, float> mm = pangolin::GetMinMax(img, pangolin::Round(froi), img.fmt);
 
-        printf("Min / Max in Region: %f / %f\n", mm.first, mm.second);
-    }
-    else
-    {
-        pangolin::ImageViewHandler::Keyboard(view, key, x, y, pressed);
-    }
+    //     printf("Min / Max in Region: %f / %f\n", mm.first, mm.second);
+    // }
+    // else
+    // {
+    //     pangolin::ImageViewHandler::Keyboard(view, key, x, y, pressed);
+    // }
 }
 
 pangolin::GlTexture& ImageView::Tex() {
@@ -179,10 +183,15 @@ ImageView& ImageView::SetImage(const pangolin::GlTexture& texture)
         SetAspect((float)texture.width / (float)texture.height);
         tex.Reinitialise(texture.width, texture.height, texture.internal_format, true);
     }
-
+    
+#ifdef HAVE_GLES_2
+    PFNGLCOPYIMAGESUBDATAOESPROC glCopyImageSubDataOES;
+    glCopyImageSubDataOES(
+            texture.tid, GL_TEXTURE_2D, 0, 0, 0, 0, tex.tid, GL_TEXTURE_2D, 0, 0, 0, 0, tex.width, tex.height, 1);
+#else 
     glCopyImageSubData(
             texture.tid, GL_TEXTURE_2D, 0, 0, 0, 0, tex.tid, GL_TEXTURE_2D, 0, 0, 0, 0, tex.width, tex.height, 1);
-
+#endif
     return *this;
 }
 

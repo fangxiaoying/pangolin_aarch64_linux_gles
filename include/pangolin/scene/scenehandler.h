@@ -75,38 +75,38 @@ struct SceneHandler : public Handler3D
                      int x, int y, int grab_width,
                      std::map<GLuint, Interactive*>& hit_objects )
     {
-        // Get views viewport / modelview /projection
-        GLint viewport[4] = {view.v.l, view.v.b, view.v.w, view.v.h};
-        pangolin::OpenGlMatrix mv = cam_state.GetModelViewMatrix();
-        pangolin::OpenGlMatrix proj = cam_state.GetProjectionMatrix();
+        // // Get views viewport / modelview /projection
+        // GLint viewport[4] = {view.v.l, view.v.b, view.v.w, view.v.h};
+        // pangolin::OpenGlMatrix mv = cam_state.GetModelViewMatrix();
+        // pangolin::OpenGlMatrix proj = cam_state.GetProjectionMatrix();
 
-        // Prepare hit buffer object
-        const unsigned int MAX_SEL_SIZE = 64;
-        GLuint vSelectBuf[MAX_SEL_SIZE];
-        glSelectBuffer(MAX_SEL_SIZE, vSelectBuf);
+        // // Prepare hit buffer object
+        // const unsigned int MAX_SEL_SIZE = 64;
+        // GLuint vSelectBuf[MAX_SEL_SIZE];
+        // glSelectBuffer(MAX_SEL_SIZE, vSelectBuf);
 
-        // Load and adjust modelview projection matrices
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        gluPickMatrix(x, y, grab_width, grab_width, viewport);
-        proj.Multiply();
-        glMatrixMode(GL_MODELVIEW);
-        mv.Load();
+        // // Load and adjust modelview projection matrices
+        // glMatrixMode(GL_PROJECTION);
+        // glLoadIdentity();
+        // gluPickMatrix(x, y, grab_width, grab_width, viewport);
+        // proj.Multiply();
+        // glMatrixMode(GL_MODELVIEW);
+        // mv.Load();
 
-        // Render scenegraph in 'select' mode
-        glRenderMode(GL_SELECT);
-        glInitNames();
-        RenderParams select;
-        select.render_mode = GL_SELECT;
-        scene.Render(select);
-        glFlush();
+        // // Render scenegraph in 'select' mode
+        // glRenderMode(GL_SELECT);
+        // glInitNames();
+        // RenderParams select;
+        // select.render_mode = GL_SELECT;
+        // scene.Render(select);
+        // glFlush();
 
-        GLint nHits = glRenderMode(GL_RENDER);
-        //    std::cout << " -- Number of Hits are: " << nHits << std::endl;
-        //    std::cout << " -- size of hitobjects: " << hit_objects.size() << std::endl;
-        if (nHits > 0) {
-            ProcessHitBuffer(nHits, vSelectBuf, hit_objects);
-        }
+        // GLint nHits = glRenderMode(GL_RENDER);
+        // //    std::cout << " -- Number of Hits are: " << nHits << std::endl;
+        // //    std::cout << " -- size of hitobjects: " << hit_objects.size() << std::endl;
+        // if (nHits > 0) {
+        //     ProcessHitBuffer(nHits, vSelectBuf, hit_objects);
+        // }
     }
 
     void Mouse(pangolin::View& view, pangolin::MouseButton button,

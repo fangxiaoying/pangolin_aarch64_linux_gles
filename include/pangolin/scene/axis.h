@@ -25,19 +25,19 @@ struct Axis : public Renderable, public Interactive
 
     void Render(const RenderParams&) override {
         glColor4f(1,0,0,1);
-        glPushName(label_x.Id());
+        //glPushName(label_x.Id());
         glDrawLine(0,0,0, axis_length,0,0);
-        glPopName();
+        //glPopName();
 
         glColor4f(0,1,0,1);
-        glPushName(label_y.Id());
+        //glPushName(label_y.Id());
         glDrawLine(0,0,0, 0,axis_length,0);
-        glPopName();
+        //glPopName();
 
         glColor4f(0,0,1,1);
-        glPushName(label_z.Id());
+        //glPushName(label_z.Id());
         glDrawLine(0,0,0, 0,0,axis_length);
-        glPopName();
+        //glPopName();
     }
 
     bool Mouse(

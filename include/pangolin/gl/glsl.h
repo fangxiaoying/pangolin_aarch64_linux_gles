@@ -372,6 +372,7 @@ inline bool GlSlProgram::AddPreprocessedShader(
     if(!prog) {
         prog = glCreateProgram();
     }
+    
 
 //    PrintSourceCode(source_code);
 

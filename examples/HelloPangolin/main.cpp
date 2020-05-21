@@ -1,4 +1,6 @@
+//#define GL_OES_copy_image 1
 #include <pangolin/pangolin.h>
+
 
 int main( int /*argc*/, char** /*argv*/ )
 {
@@ -17,14 +19,18 @@ int main( int /*argc*/, char** /*argv*/ )
             .SetBounds(0.0, 1.0, 0.0, 1.0, -640.0f/480.0f)
             .SetHandler(&handler);
 
+    GLenum prog = -1;
+
     while( !pangolin::ShouldQuit() )
     {
         // Clear screen and activate view to render into
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         d_cam.Activate(s_cam);
-
+ 
         // Render OpenGL Cube
         pangolin::glDrawColouredCube();
+        //pangolin:: glDrawTriangle();
+
 
         // Swap frames and Process Events
         pangolin::FinishFrame();

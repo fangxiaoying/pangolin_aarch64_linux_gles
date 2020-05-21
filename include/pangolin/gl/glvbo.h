@@ -107,7 +107,9 @@ inline void RenderVboCbo(GlBuffer& vbo, GlBuffer& cbo, bool draw_color, GLenum m
 {
     if(draw_color) {
         cbo.Bind();
+#ifndef HAVE_GLES_2
         glColorPointer(cbo.count_per_element, cbo.datatype, 0, 0);
+#endif
         glEnableClientState(GL_COLOR_ARRAY);
     }
     
@@ -141,7 +143,9 @@ inline void RenderVboIboCbo(GlBuffer& vbo, GlBuffer& ibo, GlBuffer& cbo, bool dr
 {
     if(draw_color) {
         cbo.Bind();
+#ifndef HAVE_GLES_2
         glColorPointer(cbo.count_per_element, cbo.datatype, 0, 0);
+#endif
         glEnableClientState(GL_COLOR_ARRAY);
     }
     
@@ -155,71 +159,75 @@ inline void RenderVboIboCbo(GlBuffer& vbo, GlBuffer& ibo, GlBuffer& cbo, bool dr
 
 inline void RenderVboIboCboNbo(GlBuffer& vbo, GlBuffer& ibo, GlBuffer& cbo, GlBuffer& nbo, bool draw_mesh, bool draw_color, bool draw_normals)
 {
-    if(draw_color) {
-        cbo.Bind();
-        glColorPointer(cbo.count_per_element, cbo.datatype, 0, 0);
-        glEnableClientState(GL_COLOR_ARRAY);
-    }
-    
-    if(draw_normals) {
-        nbo.Bind();
-        glNormalPointer(nbo.datatype, (GLsizei)(nbo.count_per_element * GlDataTypeBytes(nbo.datatype)),0);
-        glEnableClientState(GL_NORMAL_ARRAY);
-    }
 
-    vbo.Bind();
-    glVertexPointer(vbo.count_per_element, vbo.datatype, 0, 0);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    
-    if(draw_mesh) {
-        ibo.Bind();
-        glDrawElements(GL_TRIANGLE_STRIP,ibo.num_elements, ibo.datatype, 0);
-        ibo.Unbind();
-    }else{
-        glDrawArrays(GL_POINTS, 0, vbo.num_elements);
-    }
-    
-    if(draw_color) {
-        glDisableClientState(GL_COLOR_ARRAY);
-        cbo.Unbind();
-    }
-    
-    if(draw_normals) {
-        glDisableClientState(GL_NORMAL_ARRAY);
-        nbo.Unbind();
-    }
+    // if(draw_color) {
+    //     cbo.Bind();
 
-    glDisableClientState(GL_VERTEX_ARRAY);
-    vbo.Unbind();
+    //     glColorPointer(cbo.count_per_element, cbo.datatype, 0, 0);
+
+    //     glEnableClientState(GL_COLOR_ARRAY);
+    // }
+    
+    // if(draw_normals) {
+    //     nbo.Bind();
+    //     glNormalPointer(nbo.datatype, (GLsizei)(nbo.count_per_element * GlDataTypeBytes(nbo.datatype)),0);
+    //     glEnableClientState(GL_NORMAL_ARRAY);
+    // }
+
+    // vbo.Bind();
+    // glVertexPointer(vbo.count_per_element, vbo.datatype, 0, 0);
+    // glEnableClientState(GL_VERTEX_ARRAY);
+    
+    // if(draw_mesh) {
+    //     ibo.Bind();
+    //     glDrawElements(GL_TRIANGLE_STRIP,ibo.num_elements, ibo.datatype, 0);
+    //     ibo.Unbind();
+    // }else{
+    //     glDrawArrays(GL_POINTS, 0, vbo.num_elements);
+    // }
+    
+    // if(draw_color) {
+    //     glDisableClientState(GL_COLOR_ARRAY);
+    //     cbo.Unbind();
+    // }
+    
+    // if(draw_normals) {
+    //     glDisableClientState(GL_NORMAL_ARRAY);
+    //     nbo.Unbind();
+    // }
+
+    // glDisableClientState(GL_VERTEX_ARRAY);
+    // vbo.Unbind();
+
 }
 
 inline void RenderVboIboNbo(GlBuffer& vbo, GlBuffer& ibo, GlBuffer& nbo, bool draw_mesh, bool draw_normals)
 {
-    vbo.Bind();
-    glVertexPointer(vbo.count_per_element, vbo.datatype, 0, 0);
-    glEnableClientState(GL_VERTEX_ARRAY);
+    // vbo.Bind();
+    // glVertexPointer(vbo.count_per_element, vbo.datatype, 0, 0);
+    // glEnableClientState(GL_VERTEX_ARRAY);
 
-    if(draw_normals) {
-        nbo.Bind();
-        glNormalPointer(nbo.datatype, (GLsizei)(nbo.count_per_element * GlDataTypeBytes(nbo.datatype)), 0);
-        glEnableClientState(GL_NORMAL_ARRAY);
-    }
+    // if(draw_normals) {
+    //     nbo.Bind();
+    //     glNormalPointer(nbo.datatype, (GLsizei)(nbo.count_per_element * GlDataTypeBytes(nbo.datatype)), 0);
+    //     glEnableClientState(GL_NORMAL_ARRAY);
+    // }
 
-    if(draw_mesh) {
-        ibo.Bind();
-        glDrawElements(GL_TRIANGLE_STRIP,ibo.num_elements, ibo.datatype, 0);
-        ibo.Unbind();
-    }else{
-        glDrawArrays(GL_POINTS, 0, vbo.num_elements);
-    }
+    // if(draw_mesh) {
+    //     ibo.Bind();
+    //     glDrawElements(GL_TRIANGLE_STRIP,ibo.num_elements, ibo.datatype, 0);
+    //     ibo.Unbind();
+    // }else{
+    //     glDrawArrays(GL_POINTS, 0, vbo.num_elements);
+    // }
 
-    if(draw_normals) {
-        glDisableClientState(GL_NORMAL_ARRAY);
-        nbo.Unbind();
-    }
+    // if(draw_normals) {
+    //     glDisableClientState(GL_NORMAL_ARRAY);
+    //     nbo.Unbind();
+    // }
 
-    glDisableClientState(GL_VERTEX_ARRAY);
-    vbo.Unbind();
+    // glDisableClientState(GL_VERTEX_ARRAY);
+    // vbo.Unbind();
 }
 
 }
