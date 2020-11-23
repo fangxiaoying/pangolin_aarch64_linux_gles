@@ -36,10 +36,10 @@ namespace pangolin
 inline void glLoadMatrix(const float* m) { glLoadMatrixf(m); }
 inline void glMultMatrix(const float* m) { glMultMatrixf(m); }
 
-#ifndef HAVE_GLES
-inline void glLoadMatrix(const double* m) { glLoadMatrixd(m); }
-inline void glMultMatrix(const double* m) { glMultMatrixd(m); }
-#endif
+// #ifndef HAVE_GLES
+// inline void glLoadMatrix(const double* m) { glLoadMatrixd(m); }
+// inline void glMultMatrix(const double* m) { glMultMatrixd(m); printf("1234"); }
+// #endif
 
 OpenGlMatrix OpenGlMatrix::Translate(GLprecision x, GLprecision y, GLprecision z)
 {
@@ -102,12 +102,27 @@ OpenGlMatrix OpenGlMatrix::RotateZ(GLprecision theta_rad)
 
 void OpenGlMatrix::Load() const
 {
-    glLoadMatrix(m);
+#ifdef HAVE_GLES 
+    // pangolin::GlEngine& gl = pangolin::glEngine();
+    pangolin::GLprecision* cm = pangolin::glEngine().currentmatrix->top().m;
+    for(int i=0; i<16; ++i) cm[i] = (pangolin::GLprecision)m[i];
+    pangolin::glEngine().UpdateMatrices();
+#else
+    glLoadMatrixd(m);
+#endif
 }
 
 void OpenGlMatrix::Multiply() const
 {
+    // pangolin::GlEngine& gl = pangolin::glEngine();
+#ifdef HAVE_GLES 
+    float res[16];
+    pangolin::MatMul<4,4,4,float>(res, pangolin::glEngine().currentmatrix->top().m, m);
+    memcpy(pangolin::glEngine().currentmatrix->top().m, res, sizeof(float) * 16 );
+    pangolin::glEngine().UpdateMatrices();
+#else
     glMultMatrix(m);
+#endif
 }
 
 void OpenGlMatrix::SetIdentity()
@@ -161,9 +176,6 @@ void OpenGlRenderState::Apply() const
     if(follow) {
         T_cw.Multiply();
     }
-
-    // use gl program
-    //pangolin::glEngine().prog_fixed.Bind();
 
 }
 
@@ -344,7 +356,7 @@ void OpenGlRenderState::DisableProjectiveTexturing() const
 void OpenGlRenderState::Follow(const OpenGlMatrix& T_wc, bool follow)
 {
     this->T_cw = T_wc.Inverse();
-    
+
     if(follow != this->follow) {
         if(follow) {
             const OpenGlMatrix T_vc = GetModelViewMatrix() * T_wc;

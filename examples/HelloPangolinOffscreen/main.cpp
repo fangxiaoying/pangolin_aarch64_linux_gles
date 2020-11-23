@@ -40,7 +40,7 @@ int main( int /*argc*/, char** /*argv*/ )
 
     fbo_buffer.Unbind();
     // download and save the colour buffer
-    color_buffer.Save("fbo.png", false);
+    //color_buffer.Save("fbo.png", false);
 
     pangolin::QuitAll();
     

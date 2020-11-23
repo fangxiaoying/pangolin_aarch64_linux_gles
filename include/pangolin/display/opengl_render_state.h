@@ -138,6 +138,7 @@ struct PANGOLIN_EXPORT OpenGlMatrix {
     void Load() const;
     
     void Multiply() const;
+
     
     void SetIdentity();
     

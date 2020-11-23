@@ -49,6 +49,7 @@ public:
             "varying vec2 v_texcoord;\n"
             "void main() {\n"
             "    gl_Position = u_modelViewProjectionMatrix * a_position;\n"
+            "    gl_PointSize = 2.0;    \n"
             "    v_frontColor = u_color;\n"
             "    v_texcoord = a_texcoord;\n"
             "}\n";
@@ -222,6 +223,11 @@ inline void glVertexPointer( GLint size, GLenum type, GLsizei stride, const GLvo
     glVertexAttribPointer(pangolin::DEFAULT_LOCATION_POSITION, size, type, GL_FALSE, stride, pointer);
 }
 
+inline void glColorPointer( GLint size, GLenum type, GLsizei stride, const GLvoid * pointer)
+{
+    glVertexAttribPointer(pangolin::DEFAULT_LOCATION_COLOUR, size, type, GL_FALSE, stride, pointer);
+}
+
 inline void glTexCoordPointer( GLint size, GLenum type, GLsizei stride, const GLvoid * pointer)
 {
     glVertexAttribPointer(pangolin::DEFAULT_LOCATION_TEXCOORD, size, type, GL_FALSE, stride, pointer);
@@ -258,10 +264,12 @@ inline void glLoadMatrixd(const GLdouble* m)
 
 inline void glMultMatrixf(const GLfloat* m)
 {
-//    pangolin::GlEngine& gl = pangolin::glEngine();
-//    float res[16];
-//    pangolin::MatMul<4,4,4,float>(res, m, gl.currentmatrix->m );
-//    std::memcpy(gl.currentmatrix->m, res, sizeof(float) * 16 );
+    // pangolin::GlEngine& gl = pangolin::glEngine();
+    // float res[16];
+    // // pangolin::MatMul<4,4,4,float>(res, m, gl.currentmatrix->top().m );
+    // // memcpy(gl.currentmatrix->top().m, res, sizeof(float) * 16 );
+    // pangolin::MatMul<4,4,4,float>(res, m,gl.currentmatrix->m );
+    // memcpy(gl.currentmatrix->m, res, sizeof(float) * 16 );
     pango_print_error("Not Implemented: %s, %s, %d", __FUNCTION__, __FILE__, __LINE__);
 }
 

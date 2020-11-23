@@ -59,7 +59,7 @@ if(BUILD_PANGOLIN_VARS)
   endif()
 endif()
 
-option(BUILD_PANGOLIN_VIDEO "Build support for Pangolin Video Utilities" OFF)
+option(BUILD_PANGOLIN_VIDEO "Build support for Pangolin Video Utilities" ON)
 if(BUILD_PANGOLIN_VIDEO)
   # Generic video includes
   append_glob(HEADERS ${INCDIR}/video/*.h*)
@@ -364,7 +364,7 @@ if(BUILD_PANGOLIN_PYTHON AND BUILD_PANGOLIN_GUI AND BUILD_PANGOLIN_VARS AND NOT 
   endif()
 endif()
 
-option(BUILD_PANGOLIN_EIGEN "Build support for Eigen matrix types" ON)
+option(BUILD_PANGOLIN_EIGEN "Build support for Eigen matrix types" OFF)
 if(BUILD_PANGOLIN_EIGEN)
   find_package(Eigen QUIET)
   if(EIGEN_FOUND)
